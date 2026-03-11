@@ -10,18 +10,23 @@ public class GameEngine {
 
     public void runAdventure(MiniAdventure adventure, Player player1, Player player2){
 
+        //asks the user for input
         Scanner scanner = new Scanner(System.in);
 
+        //starts the game with two players
         adventure.initialize(p1, p2);
 
+        //while loop to keep the game going until it is considered "finished"
         while(!adventure.isFinished()){
 
             System.out.println(adventure.getCurrentState());
 
             System.out.println("Player 1 turn: ");
 
+            //continous input so that the game can run
             adventure.handleInput(p1, scanner.nextLine());
 
+            //if player 1 has won end the game if not player 2 can go
             if(adventure.isFinished()){
                 break;
             }
