@@ -1,7 +1,7 @@
 public interface MiniAdventure{
 
     //Initialize the game with two players
-    void startGame(Player 1, Player2);
+    void startGame(Player player1, Player player2);
 
     //Players will input a command and based off what is entered a certain action will occur
     void handleInput(Player player, String command);
