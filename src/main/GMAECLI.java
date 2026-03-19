@@ -55,14 +55,18 @@ public class GMAECLI {
 
                 //tbd this 
                 // 
-                // if (Status.END.toString() == adventure.currentState()) {}
-                
-                if (adventure instanceof DungeonEscapeAdventure) {
-                    if(((DungeonEscapeAdventure) adventure).isComplete()){
-
-                        break;
-                    }
+                if (Status.END.toString() == adventure.currentState()) {
+                    
+                    break;
                 }
+
+                //if (adventure instanceof DungeonEscapeAdventure) {
+                    //if(((DungeonEscapeAdventure) adventure).isComplete()){
+
+                      //  break;
+                    //}
+                //}
+                
                 System.out.print("\nEnter action: ");
                 input = scanner.nextLine();
 
