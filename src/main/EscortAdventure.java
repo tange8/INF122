@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import main.scenarios.AmbushScenario;
 import main.scenarios.FallingRocksScenario;
 import main.scenarios.MedicalSuppliesScenario;
@@ -165,6 +164,7 @@ public class EscortAdventure implements MiniAdventure {
 
     @Override
     public ScenarioPrompt processInput(String input) {
+        if (status == null) return null;
         if (status == Status.END) return null;
         if (input == null) input = "";
         input = input.trim();
@@ -174,6 +174,7 @@ public class EscortAdventure implements MiniAdventure {
             case P2MOVE -> handleMove(2, input);
             case P1RESPONSE -> handleResponse(1, input);
             case P2RESPONSE -> handleResponse(2, input);
+            case P1INIT -> null;
             case INIT, END -> null;
             default -> null;
         };

@@ -41,7 +41,6 @@ public class GMAECLI {
             }
 
             adventure.initialize(player1, player2);
-            adventure.setup();
 
             System.out.println("\n=== Adventure Started: " + adventure.getName() + " ===");
 
@@ -50,8 +49,16 @@ public class GMAECLI {
             String input = " ";
             while (!finished) {
                 ScenarioPrompt prompt = adventure.processInput(input);
-                System.out.println(adventure.currentState());
-                System.out.println(prompt.getPrompt());
+                String state = adventure.currentState();
+                System.out.println(state);
+                if (prompt != null) {
+                    System.out.println(prompt.getPrompt());
+                }
+
+                // EscortAdventure reaches END when currentState contains this text
+                if (state.contains("Adventure complete.")) {
+                    break;
+                }
 
                 //tbd this 
                 // 
