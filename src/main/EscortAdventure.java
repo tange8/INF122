@@ -169,6 +169,16 @@ public class EscortAdventure implements MiniAdventure {
         if (input == null) input = "";
         input = input.trim();
 
+        // Treat blank input as "no action" so pressing Enter doesn't count as
+        // an invalid move/choice.
+        if (input.isEmpty()) {
+            if (status == Status.P1RESPONSE || status == Status.P2RESPONSE) {
+                return activePrompt; // re-show the scenario options
+            }
+            lastMessage = "";
+            return null;
+        }
+
         return switch (status) {
             case P1MOVE -> handleMove(1, input);
             case P2MOVE -> handleMove(2, input);
