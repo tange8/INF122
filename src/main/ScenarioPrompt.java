@@ -31,7 +31,7 @@ public class ScenarioPrompt {
         prompt.append(" --- \n");
         prompt.append(description);
         prompt.append("\n");
-        prompt.append("What will you do?");
+        prompt.append("What will you do?\n");
         int i = 1;
         for (String option : options) {
             prompt.append(i);

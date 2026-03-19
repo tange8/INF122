@@ -15,15 +15,6 @@ public class EscortAdventure implements MiniAdventure {
     private static final int ROWS = 8;
     private static final int COLS = 8;
 
-    private enum Status {
-        INIT,
-        P1MOVE,
-        P2MOVE,
-        P1RESPONSE,
-        P2RESPONSE,
-        END
-    }
-
     private final String name = "Escort Adventure";
 
     private AdventureMap map;

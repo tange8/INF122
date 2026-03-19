@@ -11,17 +11,7 @@ public class DungeonEscapeAdventure implements MiniAdventure{
     private static final int ROWS = 8;
     private static final int COLS = 8;
 
-    public enum status {
-        INIT,
-        P1INIT,
-        P1MOVE,
-        P2MOVE,
-        P1RESPONSE,
-        P2RESPONSE,
-        END,
-    }
-
-    private status currentStatus;
+    private Status currentStatus;
 
     private Scenario currentScenario;
 
@@ -46,7 +36,7 @@ public class DungeonEscapeAdventure implements MiniAdventure{
     public void initialize(Player P1, Player P2) {
         p1 = P1;
         p2 = P2;
-        currentStatus = status.INIT;
+        currentStatus = Status.INIT;
         key1Collected = false;
         key2Collected = false;
         complete = false;
@@ -161,13 +151,13 @@ public class DungeonEscapeAdventure implements MiniAdventure{
                 return handleMove(input, p1, 1);
 
             case P1RESPONSE:
-                return handleResponse(input, p1, status.P2MOVE);
+                return handleResponse(input, p1, Status.P2MOVE);
 
             case P2MOVE:
                 return handleMove(input, p2, 2);
 
             case P2RESPONSE:
-                return handleResponse(input, p2, status.P1MOVE);
+                return handleResponse(input, p2, Status.P1MOVE);
 
             case END:
                 return endPrompt();
@@ -182,10 +172,10 @@ public class DungeonEscapeAdventure implements MiniAdventure{
     // -------------------------------------------------------------------------
 
     private ScenarioPrompt handleInit() {
-        currentStatus = status.P1MOVE;
+        currentStatus = Status.P1MOVE;
         String intro =
                 "You and your ally awaken in a dungeon. The exit is sealed.\n" +
-                        "Find BOTH keys hidden in the maze, then reach the exit together.\n" +
+                        "Find BOTH keys hidden in the maze, then reach the exit.\n" +
                         "Watch out for hazards, ambushes, and other surprises along the way!\n" +
                         currentState();
         return movePrompt("P1's First Move", intro, p1);
@@ -267,14 +257,14 @@ public class DungeonEscapeAdventure implements MiniAdventure{
         ScenarioPrompt prompt = currentScenario.execute(player);
 
         // Wait for the player's choice before advancing the turn
-        currentStatus = (playerNum == 1) ? status.P1RESPONSE : status.P2RESPONSE;
+        currentStatus = (playerNum == 1) ? Status.P1RESPONSE : Status.P2RESPONSE;
         return prompt;
     }
 
     private ScenarioPrompt handleObjectiveTile(Player player, int playerNum) {
-        if (key1Collected && key2Collected) {
+        if (key1Collected && key2Collected){
             // Victory!
-            currentStatus = status.END;
+            currentStatus = Status.END;
             complete = true;
             return endPrompt();
         }
@@ -297,7 +287,7 @@ public class DungeonEscapeAdventure implements MiniAdventure{
      * Parses the player's numeric choice, resolves the active scenario, applies
      * the outcome, then advances the turn to nextStatus.
      */
-    private ScenarioPrompt handleResponse(String input, Player player, status nextStatus) {
+    private ScenarioPrompt handleResponse(String input, Player player, Status nextStatus) {
         // Parse choice
         int choice;
         try {
@@ -329,7 +319,7 @@ public class DungeonEscapeAdventure implements MiniAdventure{
         currentScenario = null;
 
         // Show outcome message then prompt the next player
-        int nextPlayerNum = (nextStatus == status.P2MOVE) ? 2 : 1;
+        int nextPlayerNum = (nextStatus == Status.P2MOVE) ? 2 : 1;
         String resultMsg = outcome.getOutcomeMessage() + "\n" + currentState();
         return movePrompt("P" + nextPlayerNum + "'s Turn", resultMsg, nextPlayerNum == 1 ? p1 : p2);
     }
@@ -362,7 +352,7 @@ public class DungeonEscapeAdventure implements MiniAdventure{
 
     /** After a move with no scenario response, flip to the other player's move. */
     private void advanceTurn(int playerNum) {
-        currentStatus = (playerNum == 1) ? status.P2MOVE : status.P1MOVE;
+        currentStatus = (playerNum == 1) ? Status.P2MOVE : Status.P1MOVE;
     }
 
     /**
@@ -383,7 +373,7 @@ public class DungeonEscapeAdventure implements MiniAdventure{
     // -------------------------------------------------------------------------
 
     private static final ArrayList<String> MOVE_OPTIONS =
-            new ArrayList<>(Arrays.asList("N - Move North", "S - Move South", "E - Move East", "W - Move West"));
+            new ArrayList<>(Arrays.<String>asList("N - Move North", "S - Move South", "E - Move East", "W - Move West"));
 
     private ScenarioPrompt movePrompt(String title, String description, Player player) {
         return new ScenarioPrompt(

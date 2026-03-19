@@ -23,8 +23,8 @@ public class GMAECLI {
         Player player2 = createPlayer(2);
 
         System.out.println("Players created: ");
-        System.out.println("Player 1: " + player1);
-        System.out.println("Player 2: " + player2);
+        System.out.println("Player 1: " + player1.getName());
+        System.out.println("Player 2: " + player2.getName());
 
 
         //loops to let the player play multiple times
@@ -47,14 +47,17 @@ public class GMAECLI {
 
             //loop through the game
             boolean finished = false;
+            String input = " ";
             while (!finished) {
-                
-                System.out.println(adventure.currentState());
-                System.out.print("\nEnter action: ");
-                String input = scanner.nextLine();
-
                 ScenarioPrompt prompt = adventure.processInput(input);
+                System.out.println(adventure.currentState());
                 System.out.println(prompt.getPrompt());
+                if (Status.END.toString() == adventure.currentState()) {
+
+                }
+                System.out.print("\nEnter action: ");
+                input = scanner.nextLine();
+
             }
 
             System.out.println("\n=== Adventure Complete! ===");
