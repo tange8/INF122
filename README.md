@@ -1,32 +1,30 @@
-# INF122
+# GuildQuest
 
-## Run the game (Windows / PowerShell)
+## Running the Game
 
-1. (Optional) Compile the code into `out/`:
-```powershell
-$files = Get-ChildItem -Recurse -Filter *.java .\src\main
-mkdir out -Force | Out-Null
-javac -d out $files.FullName
 ```
-
-2. Create the jar manifest (this must be saved to a file):
-```powershell
-Set-Content -Path manifest.txt -Value "Main-Class: main.GMAECLI" -Encoding ascii
-```
-
-3. Build the jar:
-```powershell
-jar cfm GuildQuest.jar manifest.txt -C out main
-```
-
-4. Run it:
-```powershell
 java -jar GuildQuest.jar
 ```
 
-## Gameplay controls
+## Setup
 
-Input player profiles and select a mini-adventure when prompted.
+On launch you will be prompted to:
 
-Player movement uses cardinal directions:
-`N` = North, `S` = South, `E` = East, `W` = West.
+1. Enter a name for Player 1 and Player 2
+2. Choose a class for each player (enter the corresponding number)
+3. Choose a mini-adventure (enter `1` for Dungeon Escape, `2` for Escort)
+
+## Controls
+
+**Movement** — enter a single letter and press Enter:
+
+| Input | Action |
+|---|---|
+| `N` | Move North |
+| `S` | Move South |
+| `E` | Move East |
+| `W` | Move West |
+
+**Scenarios** — when a scenario is triggered, enter the number of your chosen option and press Enter.
+
+At the end of each adventure you will be asked if you want to play again (`y` / `n`).
