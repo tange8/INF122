@@ -45,6 +45,25 @@ public class EscortAdventure implements MiniAdventure {
     private ScenarioPrompt activePrompt;
     private Point activeScenarioPoint;
 
+    private boolean hasItem(Player player, String itemName) {
+        if (player == null || itemName == null) return false;
+        for (Item item : player.getInventoryList()) {
+            if (item != null && itemName.equals(item.getName())) return true;
+        }
+        return false;
+    }
+
+    private boolean consumeItem(Player player, String itemName) {
+        if (player == null || itemName == null) return false;
+        for (Item item : player.getInventoryList()) {
+            if (item != null && itemName.equals(item.getName())) {
+                player.removeItemFromInventory(item);
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String getName() {
         return name;
@@ -247,7 +266,23 @@ public class EscortAdventure implements MiniAdventure {
         }
 
         Player activePlayer = (activePlayerNum == 1) ? p1 : p2;
-        applyOutcome(activePlayer, outcome);
+
+        int playerDamageEff = Math.max(0, outcome.getPlayerDamage());
+        int npcDamageEff = Math.max(0, outcome.getNpcDamage());
+        StringBuilder itemMsg = new StringBuilder();
+
+        // Passive item effects (active player only)
+        if (playerDamageEff + npcDamageEff >= 25 && consumeItem(activePlayer, "SmokeBomb")) {
+            playerDamageEff = 0;
+            npcDamageEff = 0;
+            itemMsg.append("SmokeBomb triggers and negates the worst of the danger.\n");
+        } else if (npcDamageEff > 0 && consumeItem(activePlayer, "ShieldToken")) {
+            int reduced = Math.min(10, npcDamageEff);
+            npcDamageEff -= reduced;
+            itemMsg.append("ShieldToken triggers and protects the NPC.\n");
+        }
+
+        applyOutcome(activePlayer, outcome, playerDamageEff, npcDamageEff, itemMsg.toString());
 
         // Mark this player's scenario as cleared at this tile.
         if (activePlayerNum == 1) clearedP1.add(activeScenarioPoint);
@@ -272,20 +307,42 @@ public class EscortAdventure implements MiniAdventure {
         return null;
     }
 
-    private void applyOutcome(Player activePlayer, ScenarioOutcome outcome) {
-        if (outcome.getOutcomeMessage() != null) lastMessage = outcome.getOutcomeMessage();
+    private void applyOutcome(Player activePlayer, ScenarioOutcome outcome, int playerDamageEff, int npcDamageEff, String itemMessage) {
+        StringBuilder msg = new StringBuilder();
+        if (outcome.getOutcomeMessage() != null && !outcome.getOutcomeMessage().isBlank()) {
+            msg.append(outcome.getOutcomeMessage()).append("\n");
+        }
+        if (itemMessage != null && !itemMessage.isBlank()) {
+            msg.append(itemMessage);
+        }
 
         activePlayer.addScore(outcome.getScoreAwarded());
+        if (hasItem(activePlayer, "SmallRelic")) {
+            activePlayer.addScore(5);
+            msg.append("SmallRelic grants a small blessing.\n");
+        }
         activePlayer.addGold(outcome.getGoldAward());
 
-        applyPlayerHealthDelta(activePlayer, -outcome.getPlayerDamage());
-        applyNpcHealthDelta(-outcome.getNpcDamage());
+        applyPlayerHealthDelta(activePlayer, -playerDamageEff);
+        applyNpcHealthDelta(-npcDamageEff);
+
+        if (playerDamageEff > 0 && consumeItem(activePlayer, "Bandage")) {
+            applyPlayerHealthDelta(activePlayer, 5);
+            msg.append("Bandage is consumed to patch you up.\n");
+        }
+
+        if (activePlayer.getHealth() < 25 && consumeItem(activePlayer, "Medkit")) {
+            applyPlayerHealthDelta(activePlayer, 20);
+            msg.append("Medkit is consumed to stabilize you.\n");
+        }
 
         if (outcome.getLoot() != null) {
             for (Item item : outcome.getLoot()) {
                 if (item != null) activePlayer.addItemToInventory(item);
             }
         }
+
+        lastMessage = msg.toString().trim();
     }
 
     private void applyPlayerHealthDelta(Player player, int delta) {
