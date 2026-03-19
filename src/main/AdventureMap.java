@@ -28,7 +28,7 @@ public class AdventureMap {
         return grid[row][col];
     }
     public void setTileType(int row, int col, TileType type) {
-        if (!inBounds(row, col)) {grid[row][col].setType(type);};
+        if (inBounds(row, col)) {grid[row][col].setType(type);};
     }
 
     public Tile placePlayer(int playerNum, int row, int col) {
@@ -108,7 +108,7 @@ public class AdventureMap {
     }
 
     public static String legend() {
-        return "  Legend: [1]=P1  [2]=P2  [B]=Both  [R]=Relic  [?]=Scenario\n"
+        return "  Legend: [1]=P1  [2]=P2  [B]=Both  [?]=Scenario\n"
                 + "       [O]=Objective  [K]=Key\n";
     }
 }

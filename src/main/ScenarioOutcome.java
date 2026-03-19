@@ -19,4 +19,24 @@ public class ScenarioOutcome {
         this.loot = loot;
         this.goldAward = goldAward;
     }
+
+    public int getScoreAwarded() {
+        return scoreAwarded;
+    }
+    public int getPlayerDamage() {
+        return playerDamage;
+    }
+    public int getNpcDamage() {
+        return npcDamage;
+    }
+    public String getOutcomeMessage() {
+        return outcomeMessage;
+    }
+    public ArrayList<Item> getLoot() {
+        return loot;
+    }
+    public int getGoldAward() {
+        return goldAward;
+    }
+
 }

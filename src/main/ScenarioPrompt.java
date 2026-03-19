@@ -32,10 +32,13 @@ public class ScenarioPrompt {
         prompt.append(description);
         prompt.append("\n");
         prompt.append("What will you do?");
+        int i = 1;
         for (String option : options) {
-            prompt.append("1: ");
+            prompt.append(i);
+            prompt.append(": ");
             prompt.append(option);
             prompt.append("\n");
+            i++;
         }
         return prompt.toString();
     }
