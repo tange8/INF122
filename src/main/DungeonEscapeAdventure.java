@@ -127,20 +127,7 @@ public class DungeonEscapeAdventure implements MiniAdventure{
         return sb.toString();
     }
 
-    // -------------------------------------------------------------------------
-    // Main input router
-    // -------------------------------------------------------------------------
 
-    /**
-     * Routes raw player input through the state machine.
-     *
-     * Returns a ScenarioPrompt that the CLI should display next, or null when
-     * the game has ended (currentStatus == END).
-     *
-     * State flow:
-     *   INIT → P1MOVE → [P1RESPONSE] → P2MOVE → [P2RESPONSE] → P1MOVE → …
-     *                         ↑ only when scenario tile is uncleared
-     */
     @Override
     public ScenarioPrompt processInput(String input) {
         switch (currentStatus) {
@@ -167,9 +154,6 @@ public class DungeonEscapeAdventure implements MiniAdventure{
         }
     }
 
-    // -------------------------------------------------------------------------
-    // INIT handler
-    // -------------------------------------------------------------------------
 
     private ScenarioPrompt handleInit() {
         currentStatus = Status.P1MOVE;
@@ -181,28 +165,20 @@ public class DungeonEscapeAdventure implements MiniAdventure{
         return movePrompt("P1's First Move", intro, p1);
     }
 
-    // -------------------------------------------------------------------------
-    // MOVE handler  (P1MOVE / P2MOVE)
-    // -------------------------------------------------------------------------
-
-    /**
-     * Attempts to move the given player in the requested direction, then reacts
-     * to whatever tile they land on.
-     */
     private ScenarioPrompt handleMove(String input, Player player, int playerNum) {
         // --- Attempt movement ---
         Tile tile;
         try {
             tile = map.movePlayer(playerNum, input.trim().toUpperCase());
         } catch (IllegalArgumentException e) {
-            // Wall, out-of-bounds, or invalid direction — ask again, same player
+
             String problem = e.getMessage().equalsIgnoreCase("wall")
                     ? "There's a wall in that direction. Choose another path."
                     : "Invalid direction. Use N, S, E, or W.";
             return movePrompt("Invalid Move", problem + "\n" + currentState(), player);
         }
 
-        // --- React to the tile ---
+
         switch (tile.getType()) {
             case KEY:
                 return handleKeyTile(tile, player, playerNum);
@@ -214,14 +190,14 @@ public class DungeonEscapeAdventure implements MiniAdventure{
                 return handleObjectiveTile(player, playerNum);
 
             default:
-                // EMPTY tile — just advance turn
+
                 advanceTurn(playerNum);
                 return nextTurnPrompt(playerNum, "");
         }
     }
 
     private ScenarioPrompt handleKeyTile(Tile tile, Player player, int playerNum) {
-        // Collect the key and clear the tile
+
         if (!key1Collected) {
             key1Collected = true;
         } else {
@@ -241,35 +217,35 @@ public class DungeonEscapeAdventure implements MiniAdventure{
 
     private ScenarioPrompt handleScenarioTile(Tile tile, Player player, int playerNum) {
         if (tile.isCleared()) {
-            // Already resolved — pass through without triggering again
+
             advanceTurn(playerNum);
             return nextTurnPrompt(playerNum, "");
         }
 
-        // Trigger the scenario
+
         currentScenario = scenarios.get(new Point(tile.getRow(), tile.getCol()));
         if (currentScenario == null) {
-            // Scenario missing from map — treat as empty
+
             advanceTurn(playerNum);
             return nextTurnPrompt(playerNum, "");
         }
 
         ScenarioPrompt prompt = currentScenario.execute(player);
 
-        // Wait for the player's choice before advancing the turn
+
         currentStatus = (playerNum == 1) ? Status.P1RESPONSE : Status.P2RESPONSE;
         return prompt;
     }
 
     private ScenarioPrompt handleObjectiveTile(Player player, int playerNum) {
         if (key1Collected && key2Collected){
-            // Victory!
+
             currentStatus = Status.END;
             complete = true;
             return endPrompt();
         }
 
-        // Exit is sealed — inform the player and advance turn
+
         int keysFound = (key1Collected ? 1 : 0) + (key2Collected ? 1 : 0);
         String msg = String.format(
                 "The dungeon door is sealed. You need %d more key(s) to escape!%n%s",
@@ -279,16 +255,8 @@ public class DungeonEscapeAdventure implements MiniAdventure{
         return nextTurnPrompt(playerNum, msg);
     }
 
-    // -------------------------------------------------------------------------
-    // RESPONSE handler  (P1RESPONSE / P2RESPONSE)
-    // -------------------------------------------------------------------------
-
-    /**
-     * Parses the player's numeric choice, resolves the active scenario, applies
-     * the outcome, then advances the turn to nextStatus.
-     */
     private ScenarioPrompt handleResponse(String input, Player player, Status nextStatus) {
-        // Parse choice
+
         int choice;
         try {
             choice = Integer.parseInt(input.trim());
@@ -296,13 +264,13 @@ public class DungeonEscapeAdventure implements MiniAdventure{
             return retryResponsePrompt("Please enter the number of your choice.");
         }
 
-        // Validate choice range
+
         if (choice < 1 || choice > currentScenario.getOptions().size()) {
             return retryResponsePrompt(String.format(
                     "Please choose between 1 and %d.", currentScenario.getOptions().size()));
         }
 
-        // Resolve and apply outcome
+
         ScenarioOutcome outcome = currentScenario.resolve(choice);
         if (outcome == null) {
             return retryResponsePrompt("Something went wrong. Try a different choice.");
@@ -310,23 +278,17 @@ public class DungeonEscapeAdventure implements MiniAdventure{
 
         applyOutcome(player, outcome);
 
-        // Mark the tile cleared so it won't fire again
         Tile tile = map.findPlayer(player == p1 ? 1 : 2);
         if (tile != null) tile.setCleared(true);
 
-        // Advance the state machine
         currentStatus = nextStatus;
         currentScenario = null;
 
-        // Show outcome message then prompt the next player
         int nextPlayerNum = (nextStatus == Status.P2MOVE) ? 2 : 1;
         String resultMsg = outcome.getOutcomeMessage() + "\n" + currentState();
         return movePrompt("P" + nextPlayerNum + "'s Turn", resultMsg, nextPlayerNum == 1 ? p1 : p2);
     }
 
-    // -------------------------------------------------------------------------
-    // Outcome application
-    // -------------------------------------------------------------------------
 
     private void applyOutcome(Player player, ScenarioOutcome outcome) {
         if (outcome.getPlayerDamage() > 0) {
@@ -338,7 +300,7 @@ public class DungeonEscapeAdventure implements MiniAdventure{
         if (outcome.getScoreAwarded() > 0) {
             player.addScore(outcome.getScoreAwarded());
         }
-        // Loot items
+
         if (outcome.getLoot() != null) {
             for (Item item : outcome.getLoot()) {
                 player.addItemToInventory(item);
@@ -346,19 +308,10 @@ public class DungeonEscapeAdventure implements MiniAdventure{
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Turn management helpers
-    // -------------------------------------------------------------------------
-
-    /** After a move with no scenario response, flip to the other player's move. */
     private void advanceTurn(int playerNum) {
         currentStatus = (playerNum == 1) ? Status.P2MOVE : Status.P1MOVE;
     }
 
-    /**
-     * Returns a movement prompt addressed to the player whose turn comes AFTER
-     * playerNum (i.e. the one we just advanced to).
-     */
     private ScenarioPrompt nextTurnPrompt(int completedPlayerNum, String contextMessage) {
         int nextNum = (completedPlayerNum == 1) ? 2 : 1;
         Player nextPlayer = (nextNum == 1) ? p1 : p2;
@@ -367,10 +320,6 @@ public class DungeonEscapeAdventure implements MiniAdventure{
                 : contextMessage;
         return movePrompt("P" + nextNum + "'s Turn", body, nextPlayer);
     }
-
-    // -------------------------------------------------------------------------
-    // Prompt builders
-    // -------------------------------------------------------------------------
 
     private static final ArrayList<String> MOVE_OPTIONS =
             new ArrayList<>(Arrays.<String>asList("N - Move North", "S - Move South", "E - Move East", "W - Move West"));
@@ -382,7 +331,7 @@ public class DungeonEscapeAdventure implements MiniAdventure{
                 MOVE_OPTIONS);
     }
 
-    /** Re-ask the current scenario options after an invalid response choice. */
+
     private ScenarioPrompt retryResponsePrompt(String errorMessage) {
         return new ScenarioPrompt(
                 currentScenario.getName(),

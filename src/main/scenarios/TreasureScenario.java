@@ -11,6 +11,7 @@ public class TreasureScenario extends Scenario {
         addOption("Pick the lock.");
         addOption("Smash it open.");
         addOption("Examine it carefully for magical traps before opening.");
+        addOption("Use a key.");
     }
 
     @Override
@@ -25,14 +26,20 @@ public class TreasureScenario extends Scenario {
             case 1: return resolvePick();
             case 2: return resolveSmash();
             case 3: return resolveExamine();
+            case 4: return resolveKey();
             default: return null;
         }
     }
+    
+    private Item findKey() {
+        for (Item item : activePlayer.getInventoryList()) {
+            if (item.getName().equalsIgnoreCase("Key")) {
+                return item;
+            }
+        }
+        return null;
+    }
 
-    // Option 1 — Pick the lock
-    // Rogues open it cleanly and spot a hidden panel inside with bonus loot.
-    // Others fiddle with it long enough to eventually get it open, but nothing extra.
-    // Warriors can't manage it at all and the lock bites back.
     private ScenarioOutcome resolvePick() {
         if (activePlayer.getPlayerClass().getType() == PlayerClass.Type.ROGUE) {
             String message =
@@ -48,18 +55,12 @@ public class TreasureScenario extends Scenario {
                             "Whatever was in the chest spills out as the lid flies open — mostly dust.";
             return new ScenarioOutcome(0, 10, 0, message, loot, 10);
         }
-        // Mage
         String message =
                 "You work at the lock with a hairpin and a great deal of patience.\n" +
                         "Eventually it gives. Inside: a respectable haul of coin.";
         return new ScenarioOutcome(15, 0, 0, message, loot, 40);
     }
 
-    // Option 2 — Smash it open
-    // Warriors crack it in one blow and loot it clean.
-    // Rogues lack the brute force — they dent it but don't break it,
-    // and have to resort to picking after all (less reward).
-    // Mages can't manage it and take a knock from the rebound.
     private ScenarioOutcome resolveSmash() {
         if (activePlayer.getPlayerClass().getType() == PlayerClass.Type.WARRIOR) {
             String message =
@@ -83,10 +84,6 @@ public class TreasureScenario extends Scenario {
         return new ScenarioOutcome(0, 15, 0, message, loot, 0);
     }
 
-    // Option 3 — Examine for magical traps
-    // Mages detect the glyph, disarm it safely, and claim the full reward.
-    // Others poke around, trigger a minor ward, and still get some loot.
-    // Warriors skip the examination entirely and just open it — lucky this time.
     private ScenarioOutcome resolveExamine() {
         if (activePlayer.getPlayerClass().getType() == PlayerClass.Type.MAGE) {
             String message =
@@ -108,5 +105,22 @@ public class TreasureScenario extends Scenario {
                         "You don't find the glyph, but you find the lock — and that's enough.\n" +
                         "A small flash of light singes your eyebrows as it opens. Worth it.";
         return new ScenarioOutcome(15, 10, 0, message, loot, 55);
+    }
+
+    private ScenarioOutcome resolveKey() {
+        Item key = findKey();
+        if (key != null) {
+            activePlayer.removeItemFromInventory(key);
+            String message =
+                    "You produce a key from your pack and slide it into the lock.\n" +
+                            "The tumblers turn without resistance. The lid swings open with a contented click.\n" +
+                            "Inside: a gleaming trove of coin and valuables, undisturbed and fully intact.";
+            return new ScenarioOutcome(35, 0, 0, message, loot, 100);
+        }
+        String message =
+                "You rummage through your pack — then your pockets — then your pack again.\n" +
+                        "No key. You stand there empty-handed while the chest waits, unhelpfully locked.\n" +
+                        "You'll have to try something else.";
+        return new ScenarioOutcome(0, 0, 0, message, loot, 0);
     }
 }

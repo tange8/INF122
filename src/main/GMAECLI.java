@@ -156,7 +156,7 @@ public class GMAECLI {
 
         System.out.println("\n" + player.getName() + ", choose your starting bonus:");
         System.out.println("1. 100 Gold");
-        System.out.println("2. Key + First Aid Kit");
+        System.out.println("2. Key");
 
         while (true) {
             String input = scanner.nextLine();
@@ -168,7 +168,7 @@ public class GMAECLI {
                 case "2":
                     player.addItemToInventory(new Item("Key", "A simple key that might open something.", "Uncommon"));
                     player.addItemToInventory(new Item("First Aid Kit", "Basic healing supplies.", "Common"));
-                    System.out.println("Added a Key and a First Aid Kit to " + player.getName() + "'s inventory");
+                    System.out.println("Added a Key to " + player.getName() + "'s inventory");
                     return;
                 default:
                     System.out.println("Invalid choice, try again.");
