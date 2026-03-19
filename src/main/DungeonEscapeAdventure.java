@@ -61,6 +61,7 @@ public class DungeonEscapeAdventure implements MiniAdventure{
     @Override
     public void setup() {
         map = new AdventureMap(ROWS, COLS);
+        scenarios = new HashMap<>();
 
         // Border walls
         for (int r = 0; r < ROWS; r++) {

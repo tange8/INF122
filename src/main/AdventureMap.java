@@ -28,7 +28,7 @@ public class AdventureMap {
         return grid[row][col];
     }
     public void setTileType(int row, int col, TileType type) {
-        if (!inBounds(row, col)) {grid[row][col].setType(type);};
+        if (inBounds(row, col)) grid[row][col].setType(type);
     }
 
     public Tile placePlayer(int playerNum, int row, int col) {
