@@ -43,6 +43,10 @@ public class DungeonEscapeAdventure implements MiniAdventure{
         setup();
     }
 
+    public boolean isComplete() {
+        return complete;
+    }   
+
     // Map
     //     0  1  2  3  4  5  6  7
     //  0 [#][#][#][#][#][#][#][#]

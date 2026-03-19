@@ -52,8 +52,16 @@ public class GMAECLI {
                 ScenarioPrompt prompt = adventure.processInput(input);
                 System.out.println(adventure.currentState());
                 System.out.println(prompt.getPrompt());
-                if (Status.END.toString() == adventure.currentState()) {
 
+                //tbd this 
+                // 
+                // if (Status.END.toString() == adventure.currentState()) {}
+                
+                if (adventure instanceof DungeonEscapeAdventure) {
+                    if(((DungeonEscapeAdventure) adventure).isComplete()){
+
+                        break;
+                    }
                 }
                 System.out.print("\nEnter action: ");
                 input = scanner.nextLine();
