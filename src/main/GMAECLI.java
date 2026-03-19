@@ -55,7 +55,7 @@ public class GMAECLI {
 
                 //tbd this 
                 // 
-                if (Status.END.toString() == adventure.currentState()) {
+                if (Status.END.toString() == adventure.getCurrentStatus().toString()) {
                     
                     break;
                 }

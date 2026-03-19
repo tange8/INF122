@@ -45,7 +45,11 @@ public class DungeonEscapeAdventure implements MiniAdventure{
 
     public boolean isComplete() {
         return complete;
-    }   
+    }
+
+    public Status getCurrentStatus() {
+        return currentStatus;
+    }
 
     // Map
     //     0  1  2  3  4  5  6  7
@@ -164,8 +168,7 @@ public class DungeonEscapeAdventure implements MiniAdventure{
         String intro =
                 "You and your ally awaken in a dungeon. The exit is sealed.\n" +
                         "Find BOTH keys hidden in the maze, then reach the exit.\n" +
-                        "Watch out for hazards, ambushes, and other surprises along the way!\n" +
-                        currentState();
+                        "Watch out for hazards, ambushes, and other surprises along the way!\n";
         return movePrompt("P1's First Move", intro, p1);
     }
 
@@ -179,7 +182,7 @@ public class DungeonEscapeAdventure implements MiniAdventure{
             String problem = e.getMessage().equalsIgnoreCase("wall")
                     ? "There's a wall in that direction. Choose another path."
                     : "Invalid direction. Use N, S, E, or W.";
-            return movePrompt("Invalid Move", problem + "\n" + currentState(), player);
+            return movePrompt("Invalid Move", problem + "\n", player);
         }
 
 
@@ -212,8 +215,8 @@ public class DungeonEscapeAdventure implements MiniAdventure{
 
         int keysFound = (key1Collected ? 1 : 0) + (key2Collected ? 1 : 0);
         String msg = String.format(
-                "%s found a key! (%d/2 keys collected)%n%s",
-                player.getName(), keysFound, currentState());
+                "%s found a key! (%d/2 keys collected)%n",
+                player.getName(), keysFound);
 
         advanceTurn(playerNum);
         return nextTurnPrompt(playerNum, msg);
@@ -246,14 +249,16 @@ public class DungeonEscapeAdventure implements MiniAdventure{
 
             currentStatus = Status.END;
             complete = true;
+            p1.reset();
+            p2.reset();
             return endPrompt();
         }
 
 
         int keysFound = (key1Collected ? 1 : 0) + (key2Collected ? 1 : 0);
         String msg = String.format(
-                "The dungeon door is sealed. You need %d more key(s) to escape!%n%s",
-                2 - keysFound, currentState());
+                "The dungeon door is sealed. You need %d more key(s) to escape!%n",
+                2 - keysFound);
 
         advanceTurn(playerNum);
         return nextTurnPrompt(playerNum, msg);
@@ -289,7 +294,7 @@ public class DungeonEscapeAdventure implements MiniAdventure{
         currentScenario = null;
 
         int nextPlayerNum = (nextStatus == Status.P2MOVE) ? 2 : 1;
-        String resultMsg = outcome.getOutcomeMessage() + "\n" + currentState();
+        String resultMsg = outcome.getOutcomeMessage() + "\n" ;
         return movePrompt("P" + nextPlayerNum + "'s Turn", resultMsg, nextPlayerNum == 1 ? p1 : p2);
     }
 

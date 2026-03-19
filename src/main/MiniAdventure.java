@@ -7,4 +7,5 @@ public interface MiniAdventure {
     void setup();
     ScenarioPrompt processInput(String input);
     String currentState();
+    Status getCurrentStatus();
 }

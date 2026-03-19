@@ -71,5 +71,10 @@ public class Player {
         this.health += health;
     }
 
-
+    public void reset() {
+        this.inventory = new Inventory();
+        this.gold = 0;
+        this.score = 0;
+        this.health = maxHealth;
+    }
 }

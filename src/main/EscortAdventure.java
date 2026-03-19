@@ -55,6 +55,10 @@ public class EscortAdventure implements MiniAdventure {
         return false;
     }
 
+    public Status getCurrentStatus() {
+        return status;
+    }
+
     @Override
     public String getName() {
         return name;
@@ -171,6 +175,7 @@ public class EscortAdventure implements MiniAdventure {
             case P1RESPONSE -> handleResponse(1, input);
             case P2RESPONSE -> handleResponse(2, input);
             case INIT, END -> null;
+            default -> null;
         };
     }
 
