@@ -103,7 +103,7 @@ public class EscortAdventure implements MiniAdventure {
 
         // Interior walls (simple maze, similar style to DungeonEscapeAdventure)
         int[][] walls = {
-                {1, 4}, {2, 2}, {2, 3}, {2, 6},
+                {1, 4}, {2, 3}, {2, 6},
                 {3, 1}, {3, 5}, {4, 4}, {5, 2},
                 {5, 6}, {6, 2}, {6, 4}
         };
