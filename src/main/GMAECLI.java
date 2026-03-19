@@ -54,8 +54,7 @@ public class GMAECLI {
                 String input = scanner.nextLine();
 
                 ScenarioPrompt prompt = adventure.processInput(input);
-                System.out.println(prompt.getMessage());
-                finished = prompt.isFinished();
+                System.out.println(prompt.getPrompt());
             }
 
             System.out.println("\n=== Adventure Complete! ===");
@@ -74,7 +73,7 @@ public class GMAECLI {
 
     }
 
-    private int chooseAdventture(){
+    private int chooseAdventure(){
 
         while (true) {
 
@@ -102,8 +101,9 @@ public class GMAECLI {
             case 1:
                 return new DungeonEscapeAdventure();
             case 2:
-                return new Escort(); //Filler until we name it
-                
+                return new EscortAdventure(); //Filler until we name it
+            default:
+                return new DungeonEscapeAdventure();
         }
     }
 
@@ -163,8 +163,8 @@ public class GMAECLI {
                     System.out.println("Added 100 gold to " + player.getName());
                     return;
                 case "2":
-                    player.addItemToInventory(new Item("Key"));
-                    player.addItemToInventory(new Item("First Aid Kit"));
+                    player.addItemToInventory(new Item("Key", "A simple key that might open something.", "Uncommon"));
+                    player.addItemToInventory(new Item("First Aid Kit", "Basic healing supplies.", "Common"));
                     System.out.println("Added a Key and a First Aid Kit to " + player.getName() + "'s inventory");
                     return;
                 default:
