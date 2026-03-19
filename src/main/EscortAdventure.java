@@ -204,7 +204,7 @@ public class EscortAdventure implements MiniAdventure {
         applyKeyIfPresent(activePlayer);
 
         if (checkWinOrLose()) {
-            status = Status.END;
+            finishAdventure();
             return null;
         }
 
@@ -296,7 +296,7 @@ public class EscortAdventure implements MiniAdventure {
         activeScenarioPoint = null;
 
         if (checkWinOrLose()) {
-            status = Status.END;
+            finishAdventure();
             return null;
         }
 
@@ -373,6 +373,12 @@ public class EscortAdventure implements MiniAdventure {
         }
 
         return false;
+    }
+
+    private void finishAdventure() {
+        status = Status.END;
+        if (p1 != null) p1.reset();
+        if (p2 != null) p2.reset();
     }
 
     private boolean isDirection(String input) {
